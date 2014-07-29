@@ -1,4 +1,7 @@
 Worfbot
 =======
 
-** TODO: Add description **
+```
+$ brew install elixir
+$ iex -S mix
+```
