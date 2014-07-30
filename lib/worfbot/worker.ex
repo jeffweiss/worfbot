@@ -14,20 +14,20 @@ defmodule Worfbot.Worker do
               ]
   end
 
-  defp channels do
-    ["#internship"]
-  end
-
   def client do
     GenServer.call __MODULE__, :client
   end
 
-  def send_next_quote(recipient) do
-    GenServer.cast __MODULE__, {:send_next_quote, recipient}
+  def register_handler(handler) do
+    GenServer.cast __MODULE__, {:register_handler, handler}
   end
 
-  def join_channels do
-    GenServer.cast __MODULE__, :join_channels
+  def join_channels(channels) do
+    GenServer.cast __MODULE__, {:join_channels, channels}
+  end
+
+  def send_message(recipient, msg) do
+    GenServer.cast __MODULE__, {:send_message, recipient, msg}
   end
 
   def start_link(_) do
@@ -35,37 +35,37 @@ defmodule Worfbot.Worker do
   end
 
   def init([state]) do
-    IO.puts inspect state
     {:ok, client} = ExIrc.start_client!()
-    {:ok, handler} = Worfbot.Handler.start_link(nil)
     :random.seed(:erlang.now)
-    quotes = File.stream!("quotes.txt") |> Stream.map(&String.strip/1) |> Enum.shuffle
-
-    ExIrc.Client.add_handler_async client, handler
 
     ExIrc.Client.connect! client, state.host, state.port
     ExIrc.Client.logon    client, state.pass, state.nick, state.user, state.name
-    ExIrc.Client.join     client, "#internship"
-    ExIrc.Client.msg      client, :privmsg, "#internship", "Welcome to the 24th century."
+    # ExIrc.Client.join     client, "#internship"
+    # ExIrc.Client.msg      client, :privmsg, "#internship", "Welcome to the 24th century."
 
-    {:ok, {%{state | :client => client, :handlers => [handler]}, quotes}}
+    {:ok, %{state | :client => client}}
   end
 
-  def handle_call(:client, _from, full = {state, _}) do
-    {:reply, state.client, full}
+  def handle_call(:client, _from, state) do
+    {:reply, state.client, state}
   end
 
-  def handle_cast({:send_next_quote, channel}, {state, _quotes = [next|rest]}) do
-    ExIrc.Client.msg state.client, :privmsg, channel, next
-    {:noreply, {state, rest ++ [next]}}
+  def handle_cast({:register_handler, handler}, state) do
+    ExIrc.Client.add_handler state.client, handler
+    {:noreply, %{state | :handlers => [handler | state.handlers]}}
   end
 
-  def handle_cast(:join_channels, full_state = {state, _quotes}) do
+  def handle_cast({:send_message, channel, msg}, state) do
+    ExIrc.Client.msg state.client, :privmsg, channel, msg
+    {:noreply, state}
+  end
+
+  def handle_cast({:join_channels, channels}, state) do
     channels |> Enum.map(&ExIrc.Client.join state.client, &1)
-    {:noreply, full_state}
+    {:noreply, state}
   end
 
-  def terminate(_, {state, _}) do
+  def terminate(_, state) do
     ExIrc.Client.quit state.client, "The young people will see what it is to die - as a Klingon."
     ExIrc.Client.stop! state.client
     :ok

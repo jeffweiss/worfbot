@@ -8,12 +8,20 @@ defmodule Worfbot do
 
     children = [
       # Define workers and child supervisors to be supervised
-      worker(Worfbot.Worker, ["blah"])
+      worker(Worfbot.Worker, ["blah"]),
+      worker(Worfbot.LoginHandler, ["blah"]),
+      worker(Worfbot.QuoteHandler, ["Worf"], id: "Worf"),
+      worker(Worfbot.QuoteHandler, ["Riker"], id: "Riker"),
+      worker(Worfbot.QuoteHandler, ["Picard"], id: "Picard")
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Worfbot.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  def main(_argv) do
+    start("", "")
   end
 end
