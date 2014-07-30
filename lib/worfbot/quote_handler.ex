@@ -5,6 +5,7 @@ defmodule Worfbot.QuoteHandler do
   end
 
   def init(name) do
+    :random.seed(:erlang.now)
     quotes = File.stream!("#{String.downcase name}_quotes.txt") |> Stream.map(&String.strip/1) |> Enum.shuffle
     Worfbot.Worker.register_handler self
     {:ok, {name, quotes}}
