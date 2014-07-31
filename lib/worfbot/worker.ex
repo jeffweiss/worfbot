@@ -6,9 +6,9 @@ defmodule Worfbot.Worker do
               host: "chat.freenode.net",
               port: 6667,
               pass: "klingon",
-              nick: "lt_worfbot",
-              user: "worfbot",
-              name: "Lt. Worf Bot",
+              nick: "enterprisebot",
+              user: "enterprisebot",
+              name: "Enterprise:TNG Bot",
               client: nil,
               handlers: []
               ]
