@@ -12,6 +12,8 @@ defmodule Worfbot do
       worker(Worfbot.LoginHandler, ["blah"]),
       worker(Worfbot.QuoteHandler, ["Worf"], id: "Worf"),
       worker(Worfbot.QuoteHandler, ["Riker"], id: "Riker"),
+      worker(Worfbot.QuoteHandler, ["Data"], id: "Data"),
+      worker(Worfbot.QuoteHandler, ["Geordi"], id: "Geordi"),
       worker(Worfbot.QuoteHandler, ["Picard"], id: "Picard")
     ]
 
