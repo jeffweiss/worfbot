@@ -10,6 +10,14 @@ defmodule Worfbot.QuoteHandler do
     Worfbot.Worker.register_handler self
     {:ok, {name, quotes}}
   end
+  def handle_info({:received, message, from, channel}, {name, quotes = [next|rest]}) do
+    if Regex.match?(~r/#{name}/iu, message) do
+      Worfbot.Worker.send_message channel, name <> ": " <> next
+      {:noreply, {name, rest ++ [next]}}
+    else
+      {:noreply, {name, quotes}}
+    end
+  end
 
   def handle_info({:mentioned, message, from, channel}, {name, [next|rest]}) do
     debug "#{from} mentioned us in #{channel}: #{message}"
