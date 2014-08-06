@@ -27,7 +27,7 @@ defmodule Worfbot.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:exirc, github: "bitwalker/exirc"}]
+    [{:exirc, "~> 0.7.2"}]
   end
 
   defp escript_config do

@@ -12,8 +12,13 @@ defmodule Worfbot.QuoteHandler do
     GenServer.call(pid, :next_quote)
   end
 
+  def become_leader(pid, name) do
+    :global.register_name :"#{name}_quotes", pid
+  end
+
   def init(name) do
     Worfbot.Worker.register_handler self
+    become_leader(self, name)
     load_quotes(self)
     {:ok, {name, []}}
   end

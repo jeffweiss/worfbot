@@ -1,1 +1,1 @@
-%{"exirc": {:git, "git://github.com/bitwalker/exirc.git", "7f9e333ab0215852545042a02005dff620d7817f", []}}
+%{"exirc": {:package, "0.7.2"}}
