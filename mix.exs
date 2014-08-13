@@ -4,7 +4,7 @@ defmodule Worfbot.Mixfile do
   def project do
     [app: :worfbot,
      version: "0.0.1",
-     elixir: "~> 0.15.0",
+     elixir: "~> 0.15.1",
      escript: escript_config,
      deps: deps]
   end
@@ -13,7 +13,7 @@ defmodule Worfbot.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:exirc],
+    [applications: [:exirc, :logger],
      mod: {Worfbot, []}]
   end
 
@@ -27,8 +27,8 @@ defmodule Worfbot.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:exirc, github: "jeffweiss/exirc", ref: "update_for_elixir-0.15.0"}]
-    #[{:exirc, "~> 0.7.2"}]
+    #[{:exirc, github: "jeffweiss/exirc", ref: "update_for_elixir-0.15.1"}]
+    [{:exirc, "~> 0.8.0"}]
   end
 
   defp escript_config do

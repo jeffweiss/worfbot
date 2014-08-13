@@ -1,1 +1,1 @@
-%{"exirc": {:git, "git://github.com/jeffweiss/exirc.git", "c775f80c464eafd0c3685e6175cd03d88787699c", [ref: "update_for_elixir-0.15.0"]}}
+%{"exirc": {:package, "0.8.0"}}
