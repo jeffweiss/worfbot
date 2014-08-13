@@ -15,7 +15,8 @@ defmodule Worfbot do
       worker(Worfbot.QuoteHandler, ["Data"], id: "Data"),
       worker(Worfbot.QuoteHandler, ["Geordi"], id: "Geordi"),
       worker(Worfbot.QuoteHandler, ["Wesley"], id: "Wesley"),
-      worker(Worfbot.QuoteHandler, ["Picard"], id: "Picard")
+      worker(Worfbot.QuoteHandler, ["Picard"], id: "Picard"),
+      worker(Worfbot.QuoteHandler, ["Guinan"], id: "Guinan")
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
