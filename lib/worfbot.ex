@@ -10,6 +10,7 @@ defmodule Worfbot do
       # Define workers and child supervisors to be supervised
       worker(Worfbot.Worker, ["enterprisebot"]),
       worker(Worfbot.LoginHandler, ["blah"]),
+      worker(Worfbot.NodeMonitor, []),
       worker(Worfbot.QuoteHandler, ["Worf"], id: "Worf"),
       worker(Worfbot.QuoteHandler, ["Riker"], id: "Riker"),
       worker(Worfbot.QuoteHandler, ["Data"], id: "Data"),
