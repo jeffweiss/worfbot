@@ -1,4 +1,12 @@
 defmodule Worfbot.QuoteHandler do
+  require Logger
+
+  @vsn "0"
+
+  # def code_change("0", {name, quotes}, _extra) do
+  #   Logger.info "upgrading #{name}"
+  #   {:ok, {name, quotes |> Enum.map( &String.upcase/1 ) }}
+  # end
 
   def start_link(name) do
     GenServer.start_link(__MODULE__, name, name: :"#{name}_quotes")
@@ -17,6 +25,7 @@ defmodule Worfbot.QuoteHandler do
   end
 
   def init(name) do
+    Logger.debug "starting QuoteHandler for #{name}"
     Worfbot.Worker.register_handler self
     become_leader(self, name)
     load_quotes(self)
@@ -25,7 +34,10 @@ defmodule Worfbot.QuoteHandler do
 
   def handle_cast(:load_quotes, {name, _oldquotes}) do
     :random.seed(:erlang.now)
-    quotes = File.stream!("#{String.downcase name}_quotes.txt") |> Stream.map(&String.strip/1) |> Enum.shuffle
+    quotes = File.stream!("#{String.downcase name}_quotes.txt")
+              |> Stream.map(&String.strip/1)
+              # |> Stream.map(&String.upcase/1)
+              |> Enum.shuffle
     {:noreply, {name, quotes}}
   end
 
@@ -33,19 +45,34 @@ defmodule Worfbot.QuoteHandler do
     {:reply, next, state}
   end
 
-  def handle_info({:received, message, from, channel}, {name, quotes = [next|rest]}) do
-    if Regex.match?(~r/#{name}/iu, message) do
-      Worfbot.Worker.send_message channel, name <> ": " <> next
-      {:noreply, {name, rest ++ [next]}}
-    else
-      {:noreply, {name, quotes}}
+  def handle_info({:received, message, from, channel}, state) do
+    respond_if_needed({message, channel}, state)
+  end
+
+  def handle_info({:received, message, from}, state) do
+    respond_if_needed({message, from}, state)
+  end
+
+  defp respond_if_needed({message, channel}, state = {name, _}) do
+    cond do
+      Regex.match?(~r/^crash #{name}$/iu, message) ->
+        raise "Ermegerd"
+      Regex.match?(~r/#{name}/iu, message) ->
+        send_quote({message, channel}, state)
+      true ->
+        {:noreply, state}
     end
   end
 
-  def handle_info({:mentioned, message, from, channel}, {name, [next|rest]}) do
-    debug "#{from} mentioned us in #{channel}: #{message}"
+  defp send_quote({_, channel}, {name, [next|rest]}) do
     Worfbot.Worker.send_message channel, name <> ": " <> next
     {:noreply, {name, rest ++ [next]}}
   end
+
+  def handle_info({:mentioned, message, from, channel}, state) do
+    debug "#{from} mentioned us in #{channel}: #{message}"
+    send_quote({message, channel}, state)
+  end
+
   use Worfbot.DefaultHandler
 end

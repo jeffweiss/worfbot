@@ -14,34 +14,40 @@ defmodule Worfbot.Worker do
               ]
   end
 
+  def become_leader(pid) do
+    :global.register_name __MODULE__, pid
+  end
+
+  def find_leader do
+    :global.whereis_name __MODULE__
+  end
+
   def client do
-    GenServer.call __MODULE__, :client
+    GenServer.call find_leader, :client
   end
 
   def register_handler(handler) do
-    GenServer.cast __MODULE__, {:register_handler, handler}
+    GenServer.cast find_leader, {:register_handler, handler}
   end
 
   def join_channels(channels) do
-    GenServer.cast __MODULE__, {:join_channels, channels}
+    GenServer.cast find_leader, {:join_channels, channels}
   end
 
   def send_message(recipient, msg) do
-    GenServer.cast __MODULE__, {:send_message, recipient, msg}
+    GenServer.cast find_leader, {:send_message, recipient, msg}
   end
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, [%State{}], name: __MODULE__)
+  def start_link(nick) do
+    GenServer.start_link(__MODULE__, [%State{:nick => nick}], name: __MODULE__)
   end
 
   def init([state]) do
+    become_leader(self)
     {:ok, client} = ExIrc.start_client!()
-    :random.seed(:erlang.now)
 
     ExIrc.Client.connect! client, state.host, state.port
     ExIrc.Client.logon    client, state.pass, state.nick, state.user, state.name
-    # ExIrc.Client.join     client, "#internship"
-    # ExIrc.Client.msg      client, :privmsg, "#internship", "Welcome to the 24th century."
 
     {:ok, %{state | :client => client}}
   end

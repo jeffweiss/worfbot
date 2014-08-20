@@ -1,17 +1,19 @@
 defmodule Worfbot.Spam do
   def spam(recipient) do
-    :erlang.now
-    |> :random.seed
+    #:erlang.now
+    #|> :random.seed
 
-    :global.registered_names
-    |> Enum.shuffle
-    |> List.first
+    #:global.registered_names
+    #|> Enum.shuffle
+    #|> List.first
+    :Worf_quotes
     |> :global.whereis_name
-    |> Kernel.send {:mentioned, "wat", "wat", recipient}
+    |> Kernel.send {:mentioned, "not a real message", "spammer", recipient}
 
-    :random.uniform(30000)
+    :random.uniform(15_000)
     |> :timer.sleep
 
     spam(recipient)
   end
+
 end

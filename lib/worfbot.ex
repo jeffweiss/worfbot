@@ -8,7 +8,7 @@ defmodule Worfbot do
 
     children = [
       # Define workers and child supervisors to be supervised
-      worker(Worfbot.Worker, ["blah"]),
+      worker(Worfbot.Worker, ["enterprisebot"]),
       worker(Worfbot.LoginHandler, ["blah"]),
       worker(Worfbot.QuoteHandler, ["Worf"], id: "Worf"),
       worker(Worfbot.QuoteHandler, ["Riker"], id: "Riker"),

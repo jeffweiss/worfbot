@@ -14,7 +14,8 @@ defmodule Worfbot.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [applications: [:exirc, :logger],
-     mod: {Worfbot, []}]
+     mod: {Worfbot, []}
+    ]
   end
 
   # Dependencies can be hex.pm packages:
@@ -27,7 +28,7 @@ defmodule Worfbot.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    #[{:exirc, github: "jeffweiss/exirc", ref: "update_for_elixir-0.15.1"}]
+    #[{:exirc, github: "jeffweiss/exirc", ref: "allow_remote_handlers"}]
     [{:exirc, "~> 0.8.0"}]
   end
 
