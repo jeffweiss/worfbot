@@ -3,10 +3,10 @@ defmodule Worfbot.QuoteHandler do
 
   @vsn "0"
 
-  # def code_change("0", {name, quotes}, _extra) do
-  #   Logger.info "upgrading #{name}"
-  #   {:ok, {name, quotes |> Enum.map( &String.upcase/1 ) }}
-  # end
+   # def code_change("0", {name, quotes}, _extra) do
+   #   Logger.info "upgrading #{name}"
+   #   {:ok, {name, quotes |> Enum.map( &String.upcase/1 ) }}
+   # end
 
   def start_link(name) do
     GenServer.start_link(__MODULE__, name, name: :"#{name}_quotes")
